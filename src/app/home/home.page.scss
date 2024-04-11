@@ -1,0 +1,81 @@
+.home-card {
+    text-align: center;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    margin-bottom: 20px;
+  }
+  
+  .home-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .home-card ion-card-header {
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Center items vertically */
+  }
+  
+  .home-icon {
+    font-size: 3rem;
+  }
+  
+  ion-card-title {
+    font-weight: bold;
+  }
+  
+  ion-card-subtitle {
+    color: var(--ion-text-color);
+  }
+  
+  /* On small screens, display cards in two columns */
+  @media (max-width: 576px) {
+    .ion-col {
+      max-width: 50%;
+    }
+  }
+  
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .home-card.animated {
+    animation: fadeInUp 0.5s ease-out;
+  }
+  
+  .card-primary {
+    --ion-color-base: #3498db;
+  }
+  
+  .card-secondary {
+    --ion-color-base: #2ecc71;
+  }
+  
+  .card-tertiary {
+    --ion-color-base: #9b59b6;
+  }
+  
+  .card-success {
+    --ion-color-base: #27ae60;
+  }
+  
+  .card-warning {
+    --ion-color-base: #f39c12;
+  }
+  
+  .card-info {
+    --ion-color-base: #3498db;
+  }
+  .ion-icon{
+    text-align: center;
+  }
+  

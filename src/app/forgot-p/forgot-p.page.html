@@ -1,0 +1,22 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Forgot Password</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="forgot-password-container">
+    <div class="forgot-password-form">
+      <ion-item lines="none">
+        <ion-label position="floating">Email</ion-label>
+        <ion-input type="email" [(ngModel)]="email"></ion-input>
+      </ion-item>
+
+      <ion-button expand="block" (click)="sendResetLink()">Send Reset Link</ion-button>
+    </div>
+
+    <div class="preloader" *ngIf="loading">
+      <ion-spinner></ion-spinner>
+    </div>
+  </div>
+</ion-content>

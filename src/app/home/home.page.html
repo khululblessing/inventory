@@ -1,0 +1,69 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Home
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-grid>
+    <ion-row class="ion-align-items-stretch">
+      <ion-col size="12" size-md="6" size-lg="4">
+        <ion-card (click)="captureInventory()" color="primary" class="home-card animated card-primary">
+          <ion-card-header>
+            <ion-icon name="cloud-upload-outline" class="home-icon"></ion-icon>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-card-title>Capture Inventory</ion-card-title>
+            <ion-card-subtitle>Scan and add items</ion-card-subtitle>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col size="12" size-md="6" size-lg="4">
+        <ion-card (click)="updateInventory()" color="tertiary" class="home-card animated card-secondary">
+          <ion-card-header>
+            <ion-icon name="create-outline" class="home-icon"></ion-icon>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-card-title>Update Inventory</ion-card-title>
+            <ion-card-subtitle>Edit existing items</ion-card-subtitle>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col size="12" size-md="6" size-lg="4">
+        <ion-card (click)="delivery()" color="secondary" class="home-card animated card-tertiary">
+          <ion-card-header>
+            <ion-icon name="reader-outline" class="home-icon"></ion-icon>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-card-title>Delivery</ion-card-title>
+            <ion-card-subtitle>record delivered stock</ion-card-subtitle>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col size="12" size-md="6" size-lg="4">
+        <ion-card (click)="viewRemainingInventory()" color="warning" class="home-card animated card-success">
+          <ion-card-header>
+            <ion-icon name="list-outline" class="home-icon"></ion-icon>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-card-title>View Remaining Inventory</ion-card-title>
+            <ion-card-subtitle>See available stock</ion-card-subtitle>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col size="12" size-md="6" size-lg="4">
+        <ion-card (click)="viewAnalytics()" color="success" class="home-card animated card-warning">
+          <ion-card-header>
+            <ion-icon name="stats-chart-outline" class="home-icon"></ion-icon>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-card-title>Analytics</ion-card-title>
+            <ion-card-subtitle>View statistics</ion-card-subtitle>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
