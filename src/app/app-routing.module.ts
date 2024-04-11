@@ -37,6 +37,7 @@ const routes: Routes = [
     path: 'forgot-p',
     loadChildren: () => import('./forgot-p/forgot-p.module').then( m => m.ForgotPPageModule)
   },
+
 ];
 
 @NgModule({

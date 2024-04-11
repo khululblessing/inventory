@@ -26,11 +26,12 @@ export class LoginPage implements OnInit {
   ngOnInit() {
   }
 
-  async presentToast(message: string, duration: number) {
+  async presentToast(message: string, duration: number, color: string) {
     const toast = await this.toastController.create({
       message: message,
       duration: duration,
-      position: 'top'
+      position: 'top',
+      color: color // Set the color of the toast
     });
     toast.present();
   }
@@ -49,7 +50,7 @@ export class LoginPage implements OnInit {
 
   async Login() {
     if (!this.email || !this.password) {
-      this.presentToast('Please provide both email and password', 2000);
+      this.presentToast('Please provide both email and password', 2000, 'warning');
       return;
     }
 
@@ -60,31 +61,12 @@ export class LoginPage implements OnInit {
       .then((userCredential) => {
         if (userCredential && userCredential.user) {
           const email = userCredential.user.email;
+          this.checkEmailVerification();
 
-          if (email) {
-            this.db.collection('Users', ref => ref.where('email', '==', email))
-              .get()
-              .toPromise()
-              .then((querySnapshot: any) => {
-                querySnapshot.forEach((doc: any) => {
-                  const id = doc.id;
-                  console.log(id);
-                  const userData = doc.data();
-                });
-                console.log("Login successful!");
-                this.Nav.navigateForward("/home");
-              })
-              .catch((error: any) => {
-                console.error('Error fetching user data:', error);
-                this.presentToast('Error fetching user data', 2000);
-              });
-          } else {
-            console.error('User email not found in userCredential');
-            this.presentToast('User email not found', 2000);
-          }
+
         } else {
           console.error('User credential is missing');
-          this.presentToast('User credential is missing', 2000);
+          this.presentToast('User credential is missing', 2000, 'danger');
         }
 
         // Dismiss loading indicator after login attempt
@@ -92,10 +74,25 @@ export class LoginPage implements OnInit {
       })
       .catch((error: any) => {
         console.error('Error signing in:', error);
-        this.presentToast('Invalid email or password', 2000);
+        this.presentToast('Invalid email or password', 2000, 'danger');
 
         // Dismiss loading indicator after login attempt
         this.dismissLoading();
       });
   }
+  async checkEmailVerification() {
+    const userEmail = await this.Auth.currentUser;
+    if (userEmail) {
+     // await user.reload();
+      if (userEmail.emailVerified) {
+        // Email is verified
+        this.Nav.navigateForward("/home");
+        
+      } else {
+        // Email is not verified
+       this.presentToast('Email is not verified. Please check your inbox and verify your email.', 2000, 'danger');
+      }
+    } 
+  }  
 }
+

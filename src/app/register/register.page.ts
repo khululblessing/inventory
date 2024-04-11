@@ -56,7 +56,16 @@ export class RegisterPage implements OnInit {
       if (userCredential.user) {
         await this.db.collection('Users').add(userData);
         console.log('User data added successfully');
-        this.router.navigate(['/login']);
+        const loader = await this.loadingController.create({
+          message: 'Signing up',
+          cssClass: 'custom-loader-class'
+        });
+        await loader.present();
+      
+    
+            this.sendVerificationEmail(userCredential.user);
+    
+            //////
       } else {
         console.error('User credential is missing');
       }
@@ -80,6 +89,16 @@ export class RegisterPage implements OnInit {
     } finally {
       // Dismiss the loading spinner when registration is complete or fails
       await loading.dismiss();
+    }
+  }
+  async sendVerificationEmail(user:any) {
+    try {
+      await user.sendEmailVerification();
+     // this.presentToast('Verification email sent. Please check your inbox.');
+     this.router.navigate(['/login']);
+    } catch (error) {
+      console.error('Error sending verification email:', error);
+     // this.presentToast('Error sending verification email. Please try again.');
     }
   }
 }
