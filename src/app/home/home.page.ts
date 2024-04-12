@@ -30,11 +30,12 @@ export class HomePage implements OnInit {
   }
 
   viewRemainingInventory() {
-    this.router.navigateByUrl('/view-remaining-inventory');
+    this.router.navigateByUrl('/storeroom');
   }
 
   viewAnalytics() {
     this.router.navigateByUrl('/analytics');
   }
+ 
 }
 

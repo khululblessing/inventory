@@ -37,6 +37,11 @@ const routes: Routes = [
     path: 'forgot-p',
     loadChildren: () => import('./forgot-p/forgot-p.module').then( m => m.ForgotPPageModule)
   },
+  {
+    path: 'storeroom',
+    loadChildren: () => import('./storeroom/storeroom.module').then( m => m.StoreroomPageModule)
+  },
+
 
 ];
 
