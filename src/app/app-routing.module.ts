@@ -41,6 +41,9 @@ const routes: Routes = [
     path: 'storeroom',
     loadChildren: () => import('./storeroom/storeroom.module').then( m => m.StoreroomPageModule)
   },
+  { 
+    path: 'storeroom', loadChildren: () => import('./storeroom/storeroom.module').then(m => m.StoreroomPageModule) 
+  },
 
 
 ];

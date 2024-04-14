@@ -1,60 +1,53 @@
-ion-toolbar {
-    --background: #3880ff; 
-    color:#fff;
-    text-align: center;
-  }
+ion-header {
+  --background: linear-gradient(to right, #4e54c8, #8f94fb);
+  --color: #ffffff;
+}
 
-ion-segment {
-  --background: #3880ff;
+ion-toolbar {
+  --background: transparent;
+}
+
+ion-title {
+  font-size: 24px;
   font-weight: bold;
 }
 
-/* General Styles */
-ion-content {
-  --background: #f7f7f7;
-  --ion-font-family: 'Poppins', sans-serif;
+ion-button {
+  --border-radius: 50%;
+  --padding-start: 12px;
+  --padding-end: 12px;
 }
 
-
-/* Inventory Item Styles */
-.inventory-item {
-  margin-bottom: 20px;
+.menu-options {
+  display: none;
+  animation: fadeIn 0.5s ease-in-out;
 }
 
-.animated-header {
-  background-color: #3880ff;
-  color: #fff;
-  animation: pulse 2s infinite;
+.menu-options.show {
+  display: block;
 }
 
-.animated-content {
-  background-color: #f5f5f5;
-  animation: fadeIn 1s;
+.animated-item {
+  animation: fadeIn 0.5s ease-in-out;
 }
 
-.thumbnail {
-  max-width: 100px;
-  max-height: 100px;
-  margin-top: 10px;
+.item-image {
+  max-width: 150px;
+  max-height: 150px;
 }
 
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-  }
+.full-image {
+  max-width: 100%;
+  max-height: 80vh;
 }
 
 @keyframes fadeIn {
   0% {
     opacity: 0;
+    transform: translateY(20px);
   }
   100% {
     opacity: 1;
+    transform: translateY(0);
   }
 }

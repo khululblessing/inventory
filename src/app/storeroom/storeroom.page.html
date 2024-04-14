@@ -1,116 +1,118 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>storeroom</ion-title>
-    <ion-icon style="font-size: 30px; font-weight: bolder;" routerLink="/home" slot="end" name="arrow-back-outline"></ion-icon>
+
+<ion-header [translucent]="true" class="ion-no-margin ion-no-padding">
+  <ion-toolbar class="ion-text-center">
+    <ion-buttons slot="start">
+      <ion-button (click)="toggleMenu()">
+        <ion-icon name="menu-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Inventory Management</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-searchbar [(ngModel)]="searchTerm" placeholder="Search by name" (ionInput)="filterInventory()"></ion-searchbar>
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-menu side="start" menuId="main-menu">
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Menu</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-router-outlet>
+      <ion-list>
+        <ion-item (click)="goToStoreroomPage()">
+          <ion-icon name="cube-outline" slot="start"></ion-icon>
+          <ion-label>Storeroom</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="storefront-outline" slot="start"></ion-icon>
+          <ion-label>Store</ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-router-outlet>
+  </ion-menu>
 
-  <!-- Animation for filter items -->
-  <ion-item [@fadeInOut]="'inOutAnimation'">
-    <ion-label>Filter by Category</ion-label>
-    <ion-select [(ngModel)]="selectedCategory" (ionChange)="filterInventory()">
-      <ion-select-option value="">All</ion-select-option>
-      <ion-select-option value="Cleaning Detergents">Cleaning Detergents</ion-select-option>
-      <ion-select-option value="Plastics">Plastics</ion-select-option>
-      <ion-select-option value="Cleaning Equipment">Cleaning Equipment</ion-select-option>
-    </ion-select>
-  </ion-item>
+  <ion-router-outlet #content></ion-router-outlet>
 
-  <ion-item [@fadeInOut]="'inOutAnimation'">
-    <ion-label>Filter by Quantity</ion-label>
-    <ion-select [(ngModel)]="selectedQuantityRange" (ionChange)="filterInventory()">
-      <ion-select-option value="">All</ion-select-option>
-      <ion-select-option value="tooLow">Too Low</ion-select-option>
-      <ion-select-option value="runningLow">Running Low</ion-select-option>
-      <ion-select-option value="middle">Middle</ion-select-option>
-      <ion-select-option value="full">Full</ion-select-option>
-    </ion-select>
-  </ion-item>
-
-  <!-- Animation for segment buttons -->
-  <ion-segment [@fadeInOut]="'inOutAnimation'" value="storeroom">
-    <ion-segment-button value="custom" routerLink="/home">
-      <ion-label>Menu</ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="segment" routerLink="/view">
-      <ion-label>Store</ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="storeroom" routerLink="/storeroom">
-      <ion-label>StoreRoom</ion-label>
-    </ion-segment-button>
-  </ion-segment>
-
-  <!-- Animation for inventory items -->
-  <ion-card class="inventory-item" *ngFor="let item of filteredInventory" [@fadeInOut]="'inOutAnimation'">
-    <ion-card-header class="animated-header">
-      <ion-card-title>
-        <ion-icon name="basket-outline"></ion-icon>
-        {{ item.name }}
-      </ion-card-title>
-    </ion-card-header>
+  <div class="ion-margin-top">
+    <ion-searchbar [(ngModel)]="searchTerm" placeholder="Search by barcode" (ionInput)="filterInventory()" showCancelButton="focus"></ion-searchbar>
+  </div>
   
-    <ion-card-content class="animated-content">
-      <p>
-        <ion-icon name="pricetags-outline"></ion-icon>
-        Category: {{ item.category }}
-      </p>
-      <p>
-        <ion-icon name="document-text-outline"></ion-icon>
-        Description: {{ item.description }}
-      </p>
-      <p>
-        <ion-icon name="cube-outline"></ion-icon>
-        Quantity: {{ item.quantity }}
-      </p>
-      <p>
-        <ion-icon name="barcode-outline"></ion-icon>
-        Barcode: {{ item.barcode }}
-      </p>
-      <p>
-        <ion-icon name="person-outline"></ion-icon>
-        Picker's Details: {{ item.pickersDetails }}
-      </p>
-      <p>
-        <ion-icon name="calendar-outline"></ion-icon>
-        Date Of Pickup: {{ item.dateOfPickup }}
-      </p>
-      <p>
-        <ion-icon name="time-outline"></ion-icon>
-        Time Of Pickup: {{ item.timeOfPickup }}
-      </p>
-      <img class="thumbnail" [src]="item.imageUrl" alt="{{ item.name }} Image">
-    </ion-card-content>
-  
-    <ion-row class="ion-no-padding">
-      <ion-col>
-        <ion-button (click)="openModal(item.imageUrl, item.name)" color="secondary" expand="block">
-          <ion-icon name="eye-outline"></ion-icon>
-          View
-        </ion-button>
-      </ion-col>
-    </ion-row>
-  </ion-card>
-  
-  <!-- Modal animation -->
-  <ion-modal [isOpen]="isModalOpen" (didDismiss)="isModalOpen = false" [@fadeInOut]="'inOutAnimation'">
+
+  <div class="ion-margin-top">
+    <ion-grid>
+      <ion-row>
+        <ion-col size-md="6" size-lg="4" *ngFor="let item of filteredInventory" class="ion-margin-bottom">
+          <ion-card class="animated-item">
+            <ion-card-header class="ion-text-center">
+              <ion-card-title>{{ item.name }}</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <div class="ion-text-center">
+                <img [src]="item.imageUrl" alt="{{ item.name }} Image" class="item-image">
+              </div>
+              <ion-list lines="none">
+                <ion-item>
+                  <ion-icon name="pricetag-outline" slot="start"></ion-icon>
+                  <ion-label>Category: {{ item.category }}</ion-label>
+                </ion-item>
+                <ion-item>
+                  <ion-icon name="cube-outline" slot="start"></ion-icon>
+                  <ion-label>Quantity: {{ item.quantity }}</ion-label>
+                </ion-item>
+                <ion-item>
+                  <ion-icon name="barcode-outline" slot="start"></ion-icon>
+                  <ion-label>Barcode: {{ item.barcode }}</ion-label>
+                </ion-item>
+                <ion-item>
+                  <ion-icon name="person-outline" slot="start"></ion-icon>
+                  <ion-label>Picker's Details: {{ item.pickersDetails }}</ion-label>
+                </ion-item>
+                <ion-item>
+                  <ion-icon name="calendar-outline" slot="start"></ion-icon>
+                  <ion-label>Date Of Pickup: {{ item.dateOfPickup }}</ion-label>
+                </ion-item>
+                <ion-item>
+                  <ion-icon name="time-outline" slot="start"></ion-icon>
+                  <ion-label>Time Of Pickup: {{ item.timeOfPickup }}</ion-label>
+                </ion-item>
+              </ion-list>
+            </ion-card-content>
+            <ion-row class="ion-align-items-center ion-justify-content-end ion-no-padding ion-padding-horizontal">
+              <ion-col size="6">
+                <ion-button (click)="goToUpdate(item.name,item.category,item.description,item.quantity,item.barcode,item.pickersDetails,item.dateOfPickup,item.timeOfPickup ,item.imageUrl )" color="primary" expand="block" shape="round">
+                  <ion-icon name="create-outline" slot="start"></ion-icon>
+                  Update
+                </ion-button>
+              </ion-col>
+              <ion-col size="6">
+                <ion-button (click)="openModal(item.imageUrl, item.name)" color="secondary" expand="block" shape="round">
+                  <ion-icon name="eye-outline" slot="start"></ion-icon>
+                  View
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+  <ion-modal [isOpen]="isModalOpen" (didDismiss)="isModalOpen = false">
     <ng-template>
       <ion-header>
         <ion-toolbar>
           <ion-title>{{ modalTitle }}</ion-title>
           <ion-buttons slot="end">
             <ion-button (click)="isModalOpen = false">
-              <ion-icon name="close-outline"></ion-icon>
+              <ion-icon name="close-outline" slot="icon-only"></ion-icon>
             </ion-button>
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
       <ion-content class="ion-padding">
-        <img [src]="selectedImageUrl" alt="Full Image">
+        <img [src]="selectedImageUrl" alt="Full Image" class="full-image">
+        
       </ion-content>
     </ng-template>
   </ion-modal>
-
 </ion-content>

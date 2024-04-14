@@ -1,14 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { NavigationExtras, Router } from '@angular/router';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { trigger, state, style, animate, transition } from '@angular/animations';
+
+
 @Component({
   selector: 'app-storeroom',
   templateUrl: './storeroom.page.html',
   styleUrls: ['./storeroom.page.scss'],
 })
 export class StoreroomPage implements OnInit {
-
-  inventory: any[] = []; // Initialize here
-  
+  inventory: any[] = [];
   filteredInventory: any[] = [];
   searchTerm: string = '';
   selectedCategory: string = '';
@@ -18,7 +21,7 @@ export class StoreroomPage implements OnInit {
   selectedImageUrl = '';
   modalTitle = '';
 
-  constructor(private firestore: AngularFirestore) { }
+  constructor(private firestore: AngularFirestore, private router: Router) {}
 
   ngOnInit() {
     this.getInventory();
@@ -31,10 +34,13 @@ export class StoreroomPage implements OnInit {
   }
 
   getInventory() {
-    this.firestore.collection('inventory', ref => ref.orderBy('timestamp', 'desc')).valueChanges().subscribe((data: any[]) => {
-      this.inventory = data;
-      this.filterInventory();
-    });
+    this.firestore
+      .collection('inventory', (ref) => ref.orderBy('timestamp', 'desc'))
+      .valueChanges()
+      .subscribe((data: any[]) => {
+        this.inventory = data;
+        this.filterInventory();
+      });
   }
 
   filterInventory() {
@@ -58,5 +64,41 @@ export class StoreroomPage implements OnInit {
     } else {
       return false;
     }
+  }
+
+  goToUpdate(
+    name: any,
+    category: any,
+    description: any,
+    quantity: any,
+    barcode: any,
+    pickersDetails: any,
+    dateOfPickup: any,
+    timeOfPickup: any,
+    imageUrl: any
+  ) {
+    let navi: NavigationExtras = {
+      state: {
+        name: name,
+        category: category,
+        description: description,
+        imageUrl: imageUrl || '',
+        quantity: quantity,
+        pickersDetails: pickersDetails,
+        dateOfPickup: dateOfPickup,
+        timeOfPickup: timeOfPickup,
+        barcode: barcode || '',
+      },
+    };
+    this.router.navigate(['/update-inventory'], navi);
+  }
+  isMenuOpen = false;
+
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+  
+  goToStoreroomPage() {
+    this.router.navigate(['/storeroom']);
   }
 }
