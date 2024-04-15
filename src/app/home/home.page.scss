@@ -28,6 +28,9 @@
   ion-card-subtitle {
     color: var(--ion-text-color);
   }
+  ion-title{
+    text-align: center
+  }
   
   /* On small screens, display cards in two columns */
   @media (max-width: 576px) {

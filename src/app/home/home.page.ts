@@ -16,6 +16,8 @@ export class HomePage implements OnInit {
   ngOnInit() {
   }
 
+  
+
   captureInventory() {
     
     this.router.navigate(['/capture-inventory']);

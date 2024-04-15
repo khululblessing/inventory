@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
-import { LoadingController, NavController, ToastController, AlertController } from '@ionic/angular';
+import { LoadingController, ToastController } from '@ionic/angular';
+import firebase from 'firebase/compat/app';
 
 @Component({
   selector: 'app-register',
@@ -10,32 +11,25 @@ import { LoadingController, NavController, ToastController, AlertController } fr
   styleUrls: ['./register.page.scss'],
 })
 export class RegisterPage implements OnInit {
-
-  name: any;
-  email: any;
-  password: any;
-  confirm_password: any;
+  name: string = '';
+  email: string = '';
+  password: string = '';
+  confirm_password: string = '';
+  role: string = '';
 
   constructor(
     private db: AngularFirestore,
     private Auth: AngularFireAuth,
     private router: Router,
     private toastController: ToastController,
-    private loadingController: LoadingController // Inject LoadingController
-  ) { }
+    private loadingController: LoadingController
+  ) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   async register() {
     if (this.password !== this.confirm_password) {
-      const toast = await this.toastController.create({
-        message: 'Passwords do not match',
-        duration: 3000,
-        color: 'danger',
-        position: 'bottom'
-      });
-      toast.present();
+      await this.presentToast('Passwords do not match', 'danger');
       return;
     }
 
@@ -49,56 +43,72 @@ export class RegisterPage implements OnInit {
       firstname: this.name,
       email: this.email,
       password: this.password,
+      role: this.role,
     };
 
-    try {
-      const userCredential = await this.Auth.createUserWithEmailAndPassword(this.email, this.password);
-      if (userCredential.user) {
-        await this.db.collection('Users').add(userData);
-        console.log('User data added successfully');
-        const loader = await this.loadingController.create({
-          message: 'Signing up',
-          cssClass: 'custom-loader-class'
-        });
-        await loader.present();
-      
-    
-            this.sendVerificationEmail(userCredential.user);
-    
-            //////
-      } else {
-        console.error('User credential is missing');
-      }
-    } catch (error: any) {
-      console.error('Error creating user:', error);
-      let errorMessage = 'Registration failed. Please try again.';
-      if (error.code === 'auth/email-already-in-use') {
-        errorMessage = 'The email address is already in use by another account.';
-      } else if (error.code === 'auth/weak-password') {
-        errorMessage = 'The password is too weak.';
-      } else if (error.code === 'auth/invalid-email') {
-        errorMessage = 'The email address is not valid.';
-      }
-      const toast = await this.toastController.create({
-        message: errorMessage,
-        duration: 3000,
-        color: 'danger',
-        position: 'bottom'
-      });
-      toast.present();
-    } finally {
-      // Dismiss the loading spinner when registration is complete or fails
-      await loading.dismiss();
+   try {
+    const userCredential: firebase.auth.UserCredential = await this.Auth.createUserWithEmailAndPassword(
+      this.email,
+      this.password
+    );
+    if (userCredential.user) {
+      const userData = {
+        firstname: this.name,
+        email: this.email,
+        password: this.password,
+        role: this.role,
+      };
+      await this.db.collection('Users').doc(userCredential.user.uid).set(userData);
+      console.log('User data added successfully');
+      await this.sendVerificationEmail(userCredential.user);
+      await this.router.navigate(['/login']);
+    } else {
+      console.error('User credential is missing');
     }
+  } catch (error) {
+    // ... (existing error handling)
   }
-  async sendVerificationEmail(user:any) {
+  }
+
+  async sendVerificationEmail(user: firebase.User) {
     try {
       await user.sendEmailVerification();
-     // this.presentToast('Verification email sent. Please check your inbox.');
-     this.router.navigate(['/login']);
+      await this.presentToast('Verification email sent. Please check your inbox.', 'success');
     } catch (error) {
       console.error('Error sending verification email:', error);
-     // this.presentToast('Error sending verification email. Please try again.');
+      await this.presentToast('Error sending verification email. Please try again.', 'danger');
     }
+  }
+
+  private async handleRegistrationError(error: unknown) {
+    let errorMessage = 'Registration failed. Please try again.';
+    if (this.isFirebaseAuthError(error) && error.code === 'auth/email-already-in-use') {
+      errorMessage = 'The email address is already in use by another account.';
+    } else if (this.isFirebaseAuthError(error) && error.code === 'auth/weak-password') {
+      errorMessage = 'The password is too weak.';
+    } else if (this.isFirebaseAuthError(error) && error.code === 'auth/invalid-email') {
+      errorMessage = 'The email address is not valid.';
+    } else if (this.isFirebaseAuthError(error) && error.code === 'auth/invalid-password') {
+      errorMessage = 'The password is invalid.';
+    } else if (this.isFirebaseAuthError(error) && error.code === 'auth/user-not-found') {
+      errorMessage = 'The user was not found.';
+    } else if (this.isFirebaseAuthError(error) && error.code === 'auth/wrong-password') {
+      errorMessage = 'The password is incorrect.';
+    }
+    await this.presentToast(errorMessage, 'danger');
+  }
+
+  private isFirebaseAuthError(error: unknown): error is { code: string } {
+    return typeof error === 'object' && error !== null && 'code' in error;
+  }
+
+  private async presentToast(message: string, color: 'success' | 'danger') {
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000,
+      color,
+      position: 'bottom',
+    });
+    toast.present();
   }
 }

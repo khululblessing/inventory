@@ -45,7 +45,7 @@ export class AnalyticsPage implements OnInit {
   generateUpdateFrequencyChart() {
     combineLatest([
       this.firestore.collection('inventory').valueChanges(),
-      this.firestore.collection('storeroomInventory').valueChanges(),
+      this.firestore.collection('store').valueChanges(),
     ])
       .pipe(
         map(([inventoryData, storeroomData]: [any[], any[]]) => {
