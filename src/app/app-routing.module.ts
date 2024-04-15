@@ -9,10 +9,6 @@ const routes: Routes = [
   
   },
   {
-    path: 'folder/:id',
-    loadChildren: () => import('./folder/folder.module').then(m => m.FolderPageModule)
-  },
-  {
     path: 'login',
     loadChildren: () => import('./login/login.module').then(m => m.LoginPageModule)
   },
@@ -44,6 +40,22 @@ const routes: Routes = [
   { 
     path: 'storeroom', loadChildren: () => import('./storeroom/storeroom.module').then(m => m.StoreroomPageModule) 
   },
+  {
+    path: 'analytics',
+    loadChildren: () => import('./analytics/analytics.module').then( m => m.AnalyticsPageModule)
+  },
+  {
+    path: 'store',
+    loadChildren: () => import('./store/store.module').then( m => m.StorePageModule)
+  },  {
+    path: 'stock',
+    loadChildren: () => import('./stock/stock.module').then( m => m.StockPageModule)
+  },
+
+
+
+
+
 
 
 ];

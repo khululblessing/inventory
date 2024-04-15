@@ -1,0 +1,61 @@
+<ion-header [translucent]="true" class="ion-no-margin ion-no-padding">
+  <ion-toolbar class="ion-text-center">
+    <ion-title>Add to Store</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/stock"></ion-back-button>
+    </ion-buttons>
+    <ion-menu-button menu="main-menu" slot="end"></ion-menu-button>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating">Item Name</ion-label>
+          <ion-input [(ngModel)]="itemName"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating">Item Category</ion-label>
+          <ion-input [(ngModel)]="itemCategory"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating">Item Description</ion-label>
+          <ion-textarea [(ngModel)]="itemDescription"></ion-textarea>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating">Item Quantity</ion-label>
+          <ion-input type="number" [(ngModel)]="itemQuantity"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating">Barcode</ion-label>
+          <ion-input [(ngModel)]="barcode"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-button (click)="addItemToStore()" expand="block">
+          <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+          Add to Store
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

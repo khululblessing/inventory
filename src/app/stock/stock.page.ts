@@ -6,11 +6,11 @@ import { trigger, state, style, animate, transition } from '@angular/animations'
 
 
 @Component({
-  selector: 'app-storeroom',
-  templateUrl: './storeroom.page.html',
-  styleUrls: ['./storeroom.page.scss'],
+  selector: 'app-stock',
+  templateUrl: './stock.page.html',
+  styleUrls: ['./stock.page.scss'],
 })
-export class StoreroomPage implements OnInit {
+export class StockPage implements OnInit {
   inventory: any[] = [];
   filteredInventory: any[] = [];
   searchTerm: string = '';
@@ -20,8 +20,10 @@ export class StoreroomPage implements OnInit {
   isModalOpen = false;
   selectedImageUrl = '';
   modalTitle = '';
+  photo: any[] = [];
 
-  constructor(private firestore: AngularFirestore, private router: Router) {}
+  constructor(private firestore: AngularFirestore, private router: Router) {
+  }
 
   ngOnInit() {
     this.getInventory();
@@ -35,11 +37,18 @@ export class StoreroomPage implements OnInit {
 
   getInventory() {
     this.firestore
-      .collection('inventory', (ref) => ref.orderBy('timestamp', 'desc'))
+      .collection('store')
       .valueChanges()
       .subscribe((data: any[]) => {
         this.inventory = data;
         this.filterInventory();
+        this.inventory.forEach((item: { imageUrl: any; }) => {
+          const imageUrl = item.imageUrl; // Assuming 'capturedPhotosUrl' is where you store the image URL in Firestore
+          if (imageUrl) {
+            // If the image URL exists, add it to capturedPhotos array
+            this.photo.push(imageUrl);
+          }
+        });
       });
   }
 
@@ -65,33 +74,6 @@ export class StoreroomPage implements OnInit {
       return false;
     }
   }
-
-  goToUpdate(
-    name: any,
-    category: any,
-    description: any,
-    quantity: any,
-    barcode: any,
-    pickersDetails: any,
-    dateOfPickup: any,
-    timeOfPickup: any,
-    imageUrl: any
-  ) {
-    let navi: NavigationExtras = {
-      state: {
-        name: name,
-        category: category,
-        description: description,
-        imageUrl: imageUrl || '',
-        quantity: quantity,
-        pickersDetails: pickersDetails,
-        dateOfPickup: dateOfPickup,
-        timeOfPickup: timeOfPickup,
-        barcode: barcode || '',
-      },
-    };
-    this.router.navigate(['/update-inventory'], navi);
-  }
   isMenuOpen = false;
 
   toggleMenu() {
@@ -102,6 +84,6 @@ export class StoreroomPage implements OnInit {
     this.router.navigate(['/storeroom']);
   }
   Update() {
-    this.router.navigate(['/update']);
+    this.router.navigate(['/store']);
   }
 }

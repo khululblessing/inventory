@@ -1,7 +1,7 @@
 
 <ion-header [translucent]="true" class="ion-no-margin ion-no-padding">
   <ion-toolbar class="ion-text-center">
-    <ion-title>Storeroom</ion-title>
+    <ion-title>My Shop</ion-title>
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/home"></ion-back-button>
     </ion-buttons>
@@ -39,17 +39,17 @@
   </div>
   
 
-  <div class="ion-margin-top">
-    <ion-grid>
+  <div class="ion-margin-top" >
+    <ion-grid >
       <ion-row>
-        <ion-col size-md="6" size-lg="4" *ngFor="let item of filteredInventory" class="ion-margin-bottom">
+        <ion-col size-md="6" size-lg="4" *ngFor="let item of inventory" class="ion-margin-bottom">
           <ion-card class="animated-item">
             <ion-card-header class="ion-text-center">
               <ion-card-title>{{ item.name }}</ion-card-title>
             </ion-card-header>
             <ion-card-content>
               <div class="ion-text-center">
-                <img [src]="item.imageUrl" alt="{{ item.name }} Image" class="item-image">
+                <img *ngIf="photo.length > 0" [src]="item.imageUrl" alt="{{ item.name }} Image" class="item-image">
               </div>
               <ion-list lines="none">
                 <ion-item>
@@ -82,7 +82,7 @@
               <ion-col size="6">
                 <ion-button (click)=Update()>
                   <ion-icon slot="start" name="add-circle-outline"></ion-icon>
-                   Update
+                  Add Store
                 </ion-button>
               </ion-col>
               <ion-col size="6">
