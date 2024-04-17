@@ -1,17 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFireStorage } from '@angular/fire/compat/storage';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { finalize } from 'rxjs/operators';
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { AngularFirestore, AngularFirestoreCollection, DocumentSnapshot } from '@angular/fire/compat/firestore';
 import { AlertController, LoadingController, ToastController } from '@ionic/angular';
-import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 
 @Component({
   selector: 'app-update',
   templateUrl: './update.page.html',
   styleUrls: ['./update.page.scss'],
 })
-export class UpdatePage {
+export class UpdatePage implements OnInit {
+  items: any[] = [];
   itemName: string = '';
   itemCategory: string = '';
   itemDescription: string = '';
@@ -20,181 +17,100 @@ export class UpdatePage {
   dateOfPickup: string = '';
   timeOfPickup: string = '';
   barcode: string = '';
-  imageBase64: any;
-  imageUrl: string | null = null;
-  cart: any[] = []; 
+
+
+  private inventoryCollection: AngularFirestoreCollection;
+  private storeCollection: AngularFirestoreCollection;
+
   constructor(
     private firestore: AngularFirestore,
-    private storage: AngularFireStorage,
     private loadingController: LoadingController,
-   private  ToastController: ToastController,  private alertController: AlertController,
-  
-  ) {}
+    private toastController: ToastController,
+    private alertController: AlertController
+  ) {
+    this.inventoryCollection = this.firestore.collection('inventory');
+    this.storeCollection = this.firestore.collection('store');
+  }
 
   ngOnInit() {
-  }
-  async takePicture() {
-    const image = await Camera.getPhoto({
-      quality: 90,
-      allowEditing: false,
-      resultType: CameraResultType.Base64,
-      source: CameraSource.Camera
-    });
-    this.imageBase64 = image.base64String;
+    this.fetchItemsFromStore();
   }
 
-  async scanBarcode() {
- 
-    window.document.querySelector('ion-app')?.classList.add('cameraView');
-   
-    document.querySelector('body')?.classList.add('scanner-active');
-    await BarcodeScanner.checkPermission({ force: true });
-    // make background of WebView transparent
-    // note: if you are using ionic this might not be enough, check below
-    //BarcodeScanner.hideBackground();
-    const result = await BarcodeScanner.startScan(); // start scanning and wait for a result
-    // if the result has content
-    if (result.hasContent) {
-      this.barcode = result.content;
-      console.log(result.content);
-      
-    
-      
-      const querySnapshot = await this.firestore
-      .collection('storeroomInventory')
-      .ref.where('barcode', '==', result.content)
-      .limit(1)
-      .get();
-      window.document.querySelector('ion-app')?.classList.remove('cameraView');
-      document.querySelector('body')?.classList.remove('scanner-active');
-    if (!querySnapshot.empty) {
-      // If a product with the same barcode is found, populate the input fields
-      
-      const productData:any = querySnapshot.docs[0].data();
-      this.itemName = productData.name;
-      this.itemCategory = productData.category;
-      this.itemDescription = productData.description;
-   
-      // You can similarly populate other input fields here
-    } else {
-      this.presentToast('Product not found');
-    }// log the raw scanned content
-      window.document.querySelector('ion-app')?.classList.remove('cameraView');
-    }
-  }
-
-  async uploadImage(file: string) {
-    const fileName = Date.now().toString();
-    const filePath = `images/${fileName}`;
-    const fileRef = this.storage.ref(filePath);
-    const uploadTask = fileRef.putString(file, 'base64', {
-      contentType: 'image/jpeg',
-    });
-    const snapshot = await uploadTask;
-    return snapshot.ref.getDownloadURL();
-  }
-  
-  async addItem() {
+  async fetchItemsFromStore() {
     const loader = await this.loadingController.create({
-      message: 'Adding Inventory...',
+      message: 'Fetching items from store...',
     });
     await loader.present();
 
     try {
-      if (this.imageBase64) {
-        this.imageUrl = await this.uploadImage(this.imageBase64);
+      const storeSnapshot = await this.storeCollection.get().toPromise();
+      if (storeSnapshot) {
+        this.items = storeSnapshot.docs.map((doc: any) => ({
+          id: doc.id,
+          ...doc.data() as { [key: string]: any },
+        }));
+      }
+    } catch (error) {
+      console.error('Error fetching items from store:', error);
+    } finally {
+      loader.dismiss();
+    }
+  }
+
+  async addItemToStore() {
+    const loader = await this.loadingController.create({
+      message: 'Adding item to store...',
+    });
+    await loader.present();
+
+    try {
+      // 1. Decrement the stock quantity in the 'inventory' collection
+      const querySnapshot = await this.firestore.collection('inventory').ref.where('barcode', '==',this.barcode).get();
+      if (!querySnapshot.empty) {
+        const document:any = querySnapshot.docs[0].data();
+       
+       const documentId = querySnapshot.docs[0].id; 
+      
+          await this.inventoryCollection.doc(documentId).update({ quantity:  document.quantity + this.itemQuantity });
+       
+      } else {
+        await this.presentToast('Item not found in inventory.');
+        return;
       }
 
-      const newItem = {
+      // 2. Add the item to the 'store' collection
+      await this.storeCollection.add({
         name: this.itemName,
         category: this.itemCategory,
         description: this.itemDescription,
-        imageUrl: this.imageUrl || '',
         quantity: this.itemQuantity,
         pickersDetails: this.pickersDetails,
         dateOfPickup: this.dateOfPickup,
         timeOfPickup: this.timeOfPickup,
-        barcode: this.barcode || '',
-        timestamp: new Date(),
-      };
-      this.cart.push(newItem);
-      this.presentToast('Item Updated on Storeroom');
-      await this.firestore.collection('inventory').add(newItem);
-      this.clearFields();
+        barcode: this.barcode,
+      });
+
+      await this.presentToast('Item added to store successfully.');
+
+      // Reset the form fields
+      this.itemName = '';
+      this.itemCategory = '';
+      this.itemDescription = '';
+      this.itemQuantity = 0;
+      this.barcode = '';
     } catch (error) {
-      console.error('Error adding inventory:', error);
-      // Handle error
+      console.error('Error adding item to store:', error);
+      await this.presentToast('Error adding item to store.');
     } finally {
       loader.dismiss();
     }
   }
-
-  async generateSlip() {
-    const loader = await this.loadingController.create({
-      message: 'Generating Slip...',
-    });
-    await loader.present();
-  
-    try {
-      // Create a slip document in Firestore
-      const slipData = {
-        date: new Date(),
-        items: this.cart.map(item => ({
-          name: item.name,
-          quantity: item.quantity,
-          category: item.category,
-          description: item.description,
-          imageUrl: item.imageUrl,
-          pickersDetails: item.pickersDetails,
-          dateOfPickup: item.dateOfPickup,
-          timeOfPickup: item.timeOfPickup,
-          barcode: item.barcode,
-        })),
-      };
-      await this.firestore.collection('slips').add(slipData);
-  
-      // Clear the cart after generating the slip
-      this.cart = [];
-  
-      // Show success toast notification
-      this.presentToast('Slip generated successfully');
-    } catch (error) {
-      console.error('Error generating slip:', error);
-      // Handle error
-    } finally {
-      loader.dismiss();
-    }
-   
-    
-
-
-
-    
-  }
-
-
-
-
-
-  clearFields() {
-    this.itemName = '';
-    this.itemCategory = '';
-    this.itemDescription = '';
-    this.itemQuantity = 0;
-    this.pickersDetails = '';
-    this.dateOfPickup = '';
-    this.timeOfPickup = '';
-    this.barcode = '';
-    this.imageBase64 = null;
-    this.imageUrl = null;
-  }
-
 
   async presentToast(message: string) {
-    const toast = await this.ToastController.create({
-      message: message,
+    const toast = await this.toastController.create({
+      message,
       duration: 2000,
-      position: 'top'
+      position: 'top',
     });
     toast.present();
   }
