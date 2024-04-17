@@ -4,6 +4,7 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { finalize } from 'rxjs/operators';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { AlertController, LoadingController, ToastController } from '@ionic/angular';
+import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 
 @Component({
   selector: 'app-capture-inventory',
@@ -40,6 +41,46 @@ export class CaptureInventoryPage {
       source: CameraSource.Camera
     });
     this.imageBase64 = image.base64String;
+  }
+
+  async scanBarcode() {
+ 
+    window.document.querySelector('ion-app')?.classList.add('cameraView');
+   
+    document.querySelector('body')?.classList.add('scanner-active');
+    await BarcodeScanner.checkPermission({ force: true });
+    // make background of WebView transparent
+    // note: if you are using ionic this might not be enough, check below
+    //BarcodeScanner.hideBackground();
+    const result = await BarcodeScanner.startScan(); // start scanning and wait for a result
+    // if the result has content
+    if (result.hasContent) {
+      this.barcode = result.content;
+      console.log(result.content);
+      
+    
+      
+      const querySnapshot = await this.firestore
+      .collection('storeroomInventory')
+      .ref.where('barcode', '==', result.content)
+      .limit(1)
+      .get();
+      window.document.querySelector('ion-app')?.classList.remove('cameraView');
+      document.querySelector('body')?.classList.remove('scanner-active');
+    if (!querySnapshot.empty) {
+      // If a product with the same barcode is found, populate the input fields
+      
+      const productData:any = querySnapshot.docs[0].data();
+      this.itemName = productData.name;
+      this.itemCategory = productData.category;
+      this.itemDescription = productData.description;
+   
+      // You can similarly populate other input fields here
+    } else {
+      this.presentToast('Product not found');
+    }// log the raw scanned content
+      window.document.querySelector('ion-app')?.classList.remove('cameraView');
+    }
   }
 
   async uploadImage(file: string) {

@@ -109,7 +109,7 @@ export class LoginPage implements OnInit {
             await this.router.navigate(['/home']);
           } else if (userData && typeof userData.role === 'string' && userData.role === 'Picker') {
             // Navigate to the inventory page
-            await this.router.navigate(['/picker']);
+            await this.router.navigate(['/homepicker']);
           } else {
             // Handle unknown or missing role
             await this.presentToast('Unknown user role', 2000, 'danger');

@@ -3,61 +3,58 @@
       <ion-buttons slot="start">
           <ion-back-button defaultHref="/home"></ion-back-button>
       </ion-buttons>
-      <ion-title>Update Inventory</ion-title>
+      <ion-title>Update inventory</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-grid>
-    <ion-row>
-      <ion-col size="12">
-        <ion-item>
-          <ion-label position="floating">Item Name</ion-label>
-          <ion-input [(ngModel)]="itemName" type="text"></ion-input>
-        </ion-item>
-      </ion-col>
-    </ion-row>
-
-    <ion-row>
-      <ion-col size="12">
-        <ion-item>
-          <ion-label position="floating">Category</ion-label>
-          <ion-input [(ngModel)]="itemCategory" type="text"></ion-input>
-        </ion-item>
-      </ion-col>
-    </ion-row>
-
-    <ion-row>
-      <ion-col size="12">
-        <ion-item>
-          <ion-label position="floating">Description</ion-label>
-          <ion-textarea [(ngModel)]="itemDescription"></ion-textarea>
-        </ion-item>
-      </ion-col>
-    </ion-row>
-
-    <ion-row>
-      <ion-col size="12">
-        <ion-item>
-          <ion-label position="floating">Quantity</ion-label>
-          <ion-input [(ngModel)]="itemQuantity" type="number"></ion-input>
-        </ion-item>
-      </ion-col>
-    </ion-row>
-
-    <ion-row>
-      <ion-col size="12">
-        <ion-item>
-          <ion-label>Upload Image</ion-label>
-          <input type="file" (change)="onFileSelected($event)" accept="image/*">
-        </ion-item>
-      </ion-col>
-    </ion-row>
-
-    <ion-row>
-      <ion-col size="12">
-        <ion-button expand="block" (click)="updateItem()">Update</ion-button>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+<ion-content [fullscreen]="true">
+  <ion-card>
+    <ion-card-content>
+      <ion-item>
+        <ion-button class="scan" expand="block" (click)="scanBarcode()" >
+          <ion-icon name="barcode-outline"></ion-icon> Scan barcode
+        </ion-button>
+        <ion-label position="floating">Barcode</ion-label>
+        <ion-input type="text" [(ngModel)]="barcode"   ></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Item Name</ion-label>
+        <ion-input type="text" [(ngModel)]="itemName"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Category</ion-label>
+        <ion-input type="text" [(ngModel)]="itemCategory"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Description</ion-label>
+        <ion-textarea [(ngModel)]="itemDescription"></ion-textarea>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Quantity</ion-label>
+        <ion-input type="number" [(ngModel)]="itemQuantity"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Picker's Details</ion-label>
+        <ion-input type="text" [(ngModel)]="pickersDetails"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating" class="date">Date of Pickup</ion-label>
+        <ion-input type="date" [(ngModel)]="dateOfPickup"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating" class="date">Time of Pickup</ion-label>
+        <ion-input type="time" [(ngModel)]="timeOfPickup"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Barcode (Optional)</ion-label>
+        <ion-input type="text" [(ngModel)]="barcode"></ion-input>
+      </ion-item>
+      <button id="fileInput" class="custom-file-input" (click)="takePicture()">
+        <ion-icon name="camera"></ion-icon>
+        Take Picture
+      </button>
+      <ion-button expand="block" (click)="addItem()">Update Item</ion-button>
+      <ion-button expand="block" (click)="generateSlip()">DONE</ion-button>
+    </ion-card-content>
+  </ion-card>
 </ion-content>

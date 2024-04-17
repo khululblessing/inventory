@@ -4,7 +4,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'login',
+    redirectTo: 'landing',
     pathMatch: 'full'
   
   },
@@ -55,9 +55,14 @@ const routes: Routes = [
   {
     path: 'picker',
     loadChildren: () => import('./picker/picker.module').then( m => m.PickerPageModule)
-  },  {
+  },
+  {
     path: 'homepicker',
     loadChildren: () => import('./homepicker/homepicker.module').then( m => m.HomepickerPageModule)
+  },
+  {
+    path: 'landing',
+    loadChildren: () => import('./landing/landing.module').then( m => m.LandingPageModule)
   },
 
 

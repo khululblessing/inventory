@@ -39,6 +39,11 @@ export class AppComponent {
         icon: "cube-outline"
       },
       {
+        title: "Add to Store",
+        url: "/store",
+        icon: "bag-add-outline"
+      },
+      {
         title: "Logout",
         icon: "exit",
         click: this.logout.bind(this)
