@@ -3,11 +3,11 @@ import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.page.html',
-  styleUrls: ['./home.page.scss'],
+  selector: 'app-homepicker',
+  templateUrl: './homepicker.page.html',
+  styleUrls: ['./homepicker.page.scss'],
 })
-export class HomePage implements OnInit {
+export class HomepickerPage implements OnInit {
 
   constructor(private router: Router,
               private nav: NavController,
@@ -33,13 +33,6 @@ export class HomePage implements OnInit {
 
   viewRemainingInventory() {
     this.router.navigateByUrl('/storeroom');
-  }
-
-  viewAnalytics() {
-    this.router.navigateByUrl('/analytics');
-  }
-  picker() {
-    this.router.navigateByUrl('/picker');
   }
  
 }

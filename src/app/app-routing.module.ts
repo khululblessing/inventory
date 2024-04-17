@@ -47,19 +47,18 @@ const routes: Routes = [
   {
     path: 'store',
     loadChildren: () => import('./store/store.module').then( m => m.StorePageModule)
-  },  {
+  },
+  {
     path: 'stock',
     loadChildren: () => import('./stock/stock.module').then( m => m.StockPageModule)
   },
   {
     path: 'picker',
     loadChildren: () => import('./picker/picker.module').then( m => m.PickerPageModule)
+  },  {
+    path: 'homepicker',
+    loadChildren: () => import('./homepicker/homepicker.module').then( m => m.HomepickerPageModule)
   },
-
-
-
-
-
 
 
 ];

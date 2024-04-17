@@ -15,7 +15,7 @@ export class RegisterPage implements OnInit {
   email: string = '';
   password: string = '';
   confirm_password: string = '';
-  role: string = '';
+  role: string = 'Admin';
 
   constructor(
     private db: AngularFirestore,
@@ -43,7 +43,7 @@ export class RegisterPage implements OnInit {
       firstname: this.name,
       email: this.email,
       password: this.password,
-      role: this.role,
+      Status: this.role,
     };
 
    try {

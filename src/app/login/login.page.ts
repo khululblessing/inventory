@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { LoadingController, ToastController } from '@ionic/angular';
+import { LoadingController, NavController, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import firebase from 'firebase/compat/app';
 import { Observable } from 'rxjs';
@@ -21,7 +21,8 @@ export class LoginPage implements OnInit {
     private Auth: AngularFireAuth,
     private toastController: ToastController,
     private loadingController: LoadingController,
-    private router: Router
+    private router: Router,
+    private Nav: NavController
   ) {}
 
   ngOnInit() {}
@@ -32,6 +33,15 @@ export class LoginPage implements OnInit {
       duration,
       position: 'top',
       color,
+    });
+    toast.present();
+  }
+
+  async showToast(message: string) {
+    const toast = await this.toastController.create({
+      message: message,
+      duration: 2000,
+      position: 'top',
     });
     toast.present();
   }
@@ -47,51 +57,59 @@ export class LoginPage implements OnInit {
   async dismissLoading() {
     await this.loadingController.dismiss();
   }
-
-  async login() {
-    if (!this.email || !this.password) {
-      await this.presentToast('Please provide both email and password', 2000, 'warning');
-      return;
-    }
-
-    // Show loading indicator before signing in
-    await this.presentLoading();
-
-    try {
-      const userCredential: firebase.auth.UserCredential = await this.Auth.signInWithEmailAndPassword(
-        this.email,
-        this.password
-      );
-      if (userCredential.user) {
-        await this.checkEmailVerification();
+  
+  Login() {
+    this.Auth.signInWithEmailAndPassword(this.email, this.password)
+    .then((userCredential) => {
+      if (userCredential) {
+        const email = userCredential.user?.email; // Extract email from userCredential
+  
+        if (email) {
+          this.db.collection('Users', ref => ref.where('email', '==', email))
+            .get()
+            .toPromise()
+            .then((querySnapshot: any) => {
+              querySnapshot.forEach((doc: any) => {
+                const userData = doc.data();
+                const status = userData.status; // Get the status field from userData
+                console.log(status);
+  
+                // Check if the email is verified before navigating
+                this.checkEmailVerification();
+              });
+            })
+            .catch((error: any) => {
+              this.showToast('Error fetching user data: ' + error);
+            });
+        } else {
+          this.showToast('User email not found in userCredential');
+        }
       } else {
-        console.error('User credential is missing');
-        await this.presentToast('User credential is missing', 2000, 'danger');
+        this.showToast('User credential is missing');
       }
-    } catch (error) {
-      console.error('Error signing in:', error);
-      await this.presentToast('Invalid email or password', 2000, 'danger');
-    } finally {
-      // Dismiss loading indicator after login attempt
-      await this.dismissLoading();
-    }
+    })
+    .catch((error: any) => {
+      this.showToast('Error signing in: ' + error);
+    });
   }
-
+  
   private async checkEmailVerification() {
     const userEmail = await this.Auth.currentUser;
-  
+
     if (userEmail) {
       if (userEmail.emailVerified) {
         // Email is verified, now check the user's role
         const userDocSnapshot = await this.db.collection('Users').doc(userEmail.uid).get().toPromise();
+
         if (userDocSnapshot && userDocSnapshot.exists) {
           const userData = userDocSnapshot.data() as { role?: string };
+
           if (userData && typeof userData.role === 'string' && userData.role === 'Manager') {
             // Navigate to the home page
             await this.router.navigate(['/home']);
           } else if (userData && typeof userData.role === 'string' && userData.role === 'Picker') {
             // Navigate to the inventory page
-            await this.router.navigate(['/inventory']);
+            await this.router.navigate(['/picker']);
           } else {
             // Handle unknown or missing role
             await this.presentToast('Unknown user role', 2000, 'danger');
@@ -106,4 +124,5 @@ export class LoginPage implements OnInit {
       }
     }
   }
+  
 }

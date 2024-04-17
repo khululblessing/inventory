@@ -13,7 +13,11 @@ export class StorePage implements OnInit {
   itemCategory: string = '';
   itemDescription: string = '';
   itemQuantity: number = 0;
+  pickersDetails: string = '';
+  dateOfPickup: string = '';
+  timeOfPickup: string = '';
   barcode: string = '';
+
 
   private inventoryCollection: AngularFirestoreCollection;
   private storeCollection: AngularFirestoreCollection;
@@ -67,7 +71,7 @@ export class StorePage implements OnInit {
        
        const documentId = querySnapshot.docs[0].id; 
       
-          await this.inventoryCollection.doc(documentId).update({ quantity:  document.quantity - 1 });
+          await this.inventoryCollection.doc(documentId).update({ quantity:  document.quantity - this.itemQuantity });
        
       } else {
         await this.presentToast('Item not found in inventory.');
@@ -79,7 +83,10 @@ export class StorePage implements OnInit {
         name: this.itemName,
         category: this.itemCategory,
         description: this.itemDescription,
-        quantity: 1,
+        quantity: this.itemQuantity,
+        pickersDetails: this.pickersDetails,
+        dateOfPickup: this.dateOfPickup,
+        timeOfPickup: this.timeOfPickup,
         barcode: this.barcode,
       });
 
