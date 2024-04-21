@@ -23,7 +23,11 @@
       </ion-item>
       <ion-item>
         <ion-label position="floating">Category</ion-label>
-        <ion-input type="text" [(ngModel)]="itemCategory"></ion-input>
+        <ion-select [(ngModel)]="itemCategory">
+          <ion-select-option value="plastics">Plastics</ion-select-option>
+          <ion-select-option value="cleaning-equipments">Cleaning Equipments</ion-select-option>
+          <ion-select-option value="cleaning-detergents">Cleaning Detergents</ion-select-option>
+        </ion-select>
       </ion-item>
       <ion-item>
         <ion-label position="floating">Description</ion-label>
