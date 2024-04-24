@@ -41,7 +41,7 @@ export class RegisterPage implements OnInit {
     setTimeout(async () => {
       await loading.dismiss();
     }, 3000);
-   // await loading.dismiss();
+   //  serveawait loading.dismiss();
 
     const userData = {
       firstname: this.name,

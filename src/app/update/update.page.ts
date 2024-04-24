@@ -1,6 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, DocumentSnapshot } from '@angular/fire/compat/firestore';
+import { Router } from '@angular/router';
 import { AlertController, LoadingController, ToastController } from '@ionic/angular';
+import { AngularFireStorage } from '@angular/fire/compat/storage';
+import { finalize } from 'rxjs/operators';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
+// import * as pdfMake from 'pdfmake/build/pdfmake';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+const pdfMake = require('pdfmake/build/pdfmake.js');
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { FileOpener, FileOpenerOptions } from '@capacitor-community/file-opener';
 
 @Component({
   selector: 'app-update',
@@ -17,16 +27,20 @@ export class UpdatePage implements OnInit {
   dateOfPickup: string = '';
   timeOfPickup: string = '';
   barcode: string = '';
+  productInfor: any; // Define productInfor property
+  newImage: string = ''; // Define newImage property
+  imageUrl: string = ''; // Define imageUrl property
 
-
-  private inventoryCollection: AngularFirestoreCollection;
-  private storeCollection: AngularFirestoreCollection;
+  private inventoryCollection: AngularFirestoreCollection<any>; // Provide type for AngularFirestoreCollection
+  private storeCollection: AngularFirestoreCollection<any>; // Provide type for AngularFirestoreCollection
+  imageBase64: string | undefined;
 
   constructor(
     private firestore: AngularFirestore,
     private loadingController: LoadingController,
     private toastController: ToastController,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private router: Router // Inject Router
   ) {
     this.inventoryCollection = this.firestore.collection('inventory');
     this.storeCollection = this.firestore.collection('store');
@@ -34,6 +48,31 @@ export class UpdatePage implements OnInit {
 
   ngOnInit() {
     this.fetchItemsFromStore();
+    this.getPassedData();
+  }
+
+  async takePicture() {
+    const image = await Camera.getPhoto({
+      quality: 90,
+      allowEditing: false,
+      resultType: CameraResultType.Base64,
+      source: CameraSource.Camera
+    });
+    this.imageBase64 = image.base64String;
+  }
+
+  async getPassedData() {
+    if (this.router.getCurrentNavigation()?.extras.state) {
+      this.productInfor = await this.router.getCurrentNavigation()?.extras.state;
+      console.log(this.productInfor);
+      this.barcode = this.productInfor.barcode;
+      this.itemName = this.productInfor.name;
+      this.itemCategory = this.productInfor.category;
+      this.itemDescription = this.productInfor.description;
+      this.itemQuantity = this.productInfor.quantity;
+      this.newImage = this.productInfor.imageUrl;
+      this.imageUrl = this.productInfor.imageUrl;
+    }
   }
 
   async fetchItemsFromStore() {

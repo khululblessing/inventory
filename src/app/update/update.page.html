@@ -51,6 +51,14 @@
     </ion-row>
     <ion-row>
       <ion-col>
+        <button id="fileInput" class="custom-file-input" (click)="takePicture()">
+          <ion-icon name="camera"></ion-icon>
+          Take Picture
+        </button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
         <ion-item>
           <ion-label position="floating">Picker's Details</ion-label>
           <ion-input type="text" [(ngModel)]="pickersDetails"></ion-input>

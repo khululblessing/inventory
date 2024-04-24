@@ -43,29 +43,6 @@ export class StoreroomPage implements OnInit {
       });
   }
 
-  filterInventory() {
-    this.filteredInventory = this.inventory.filter((item) =>
-      (item.name.toLowerCase().includes(this.searchTerm.toLowerCase()) || 
-      this.searchTerm === '') && 
-      (this.selectedCategory === '' || item.category === this.selectedCategory) &&
-      (this.selectedQuantityRange === '' || this.checkQuantityRange(item.quantity))
-    );
-  }
-
-  checkQuantityRange(quantity: number): boolean {
-    if (this.selectedQuantityRange === 'tooLow' && quantity <= 10) {
-      return true;
-    } else if (this.selectedQuantityRange === 'runningLow' && quantity >= 11 && quantity <= 20) {
-      return true;
-    } else if (this.selectedQuantityRange === 'middle' && quantity >= 21 && quantity <= 49) {
-      return true;
-    } else if (this.selectedQuantityRange === 'full' && quantity >= 50) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   goToUpdate(
     name: any,
     category: any,
@@ -90,7 +67,30 @@ export class StoreroomPage implements OnInit {
         barcode: barcode || '',
       },
     };
-    this.router.navigate(['/update-inventory'], navi);
+    this.router.navigate(['/update'], navi);
+  }
+
+  filterInventory() {
+    this.filteredInventory = this.inventory.filter((item) =>
+      (item.name.toLowerCase().includes(this.searchTerm.toLowerCase()) || 
+      this.searchTerm === '') && 
+      (this.selectedCategory === '' || item.category === this.selectedCategory) &&
+      (this.selectedQuantityRange === '' || this.checkQuantityRange(item.quantity))
+    );
+  }
+
+  checkQuantityRange(quantity: number): boolean {
+    if (this.selectedQuantityRange === 'tooLow' && quantity <= 10) {
+      return true;
+    } else if (this.selectedQuantityRange === 'runningLow' && quantity >= 11 && quantity <= 20) {
+      return true;
+    } else if (this.selectedQuantityRange === 'middle' && quantity >= 21 && quantity <= 49) {
+      return true;
+    } else if (this.selectedQuantityRange === 'full' && quantity >= 50) {
+      return true;
+    } else {
+      return false;
+    }
   }
   isMenuOpen = false;
 

@@ -20,8 +20,12 @@
     <ion-row>
       <ion-col>
         <ion-item>
-          <ion-label position="floating">Item Category</ion-label>
-          <ion-input [(ngModel)]="itemCategory"></ion-input>
+          <ion-label position="floating">Category</ion-label>
+          <ion-select [(ngModel)]="itemCategory">
+            <ion-select-option value="plastics">Plastics</ion-select-option>
+            <ion-select-option value="cleaning-equipments">Cleaning Equipments</ion-select-option>
+            <ion-select-option value="cleaning-detergents">Cleaning Detergents</ion-select-option>
+          </ion-select>
         </ion-item>
       </ion-col>
     </ion-row>

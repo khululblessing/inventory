@@ -80,9 +80,9 @@
             </ion-card-content>
             <ion-row class="ion-align-items-center ion-justify-content-end ion-no-padding ion-padding-horizontal">
               <ion-col size="6">
-                <ion-button (click)=Update()>
-                  <ion-icon slot="start" name="add-circle-outline"></ion-icon>
-                   Update
+                <ion-button (click)="goToUpdate(item.name,item.category,item.description,item.quantity,item.barcode,item.pickersDetails,item.dateOfPickup,item.timeOfPickup ,item.imageUrl )" color="primary" expand="block">
+                  <ion-icon name="create-outline"></ion-icon>
+                  Update
                 </ion-button>
               </ion-col>
               <ion-col size="6">

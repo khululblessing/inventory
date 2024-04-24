@@ -28,6 +28,32 @@ export class StockPage implements OnInit {
   ngOnInit() {
     this.getInventory();
   }
+  goToUpdate(
+    name: any,
+    category: any,
+    description: any,
+    quantity: any,
+    barcode: any,
+    pickersDetails: any,
+    dateOfPickup: any,
+    timeOfPickup: any,
+    imageUrl: any
+  ) {
+    let navi: NavigationExtras = {
+      state: {
+        name: name,
+        category: category,
+        description: description,
+        imageUrl: imageUrl || '',
+        quantity: quantity,
+        pickersDetails: pickersDetails,
+        dateOfPickup: dateOfPickup,
+        timeOfPickup: timeOfPickup,
+        barcode: barcode || '',
+      },
+    };
+    this.router.navigate(['/store'], navi);
+  }
 
   openModal(imageUrl: string, itemName: string) {
     this.selectedImageUrl = imageUrl;
